@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: eshop_db
+    environment:
+      POSTGRES_DB: eshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: eshop_backend
+    command: /bin/sh /app/entrypoint.sh
+    volumes:
+      - ./backend:/app
+    environment:
+      - DB_NAME=eshop
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - SECRET_KEY=django-insecure-volt-athletics-key-123456
+      - DEBUG=True
+      - ALLOWED_HOSTS=*
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: eshop_frontend
+    volumes:
+      - ./frontend/static:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:
