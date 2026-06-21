@@ -14,7 +14,7 @@ El sistema está dividido en tres contenedores de Docker coordinados de forma se
     *   Desarrollado en **HTML5 y JavaScript Puro (Vanilla JS)**.
     *   Maquetación limpia, responsiva y consistente basada en **Bootstrap 5** (CSS e Iconos).
     *   Configurado como proxy inverso en Nginx para redirigir las rutas de API `/api/` y el panel `/admin/` al contenedor del backend, evitando problemas de CORS de manera nativa.
-2.  **Backend (Django - Puerto 8000)**:
+2.  **Backend (Django - Puerto 80)**:
     *   Servidor API REST construido con **Python 3.11**, **Django** y **Django REST Framework (DRF)**.
     *   Autenticación de sesiones protegida mediante **JSON Web Tokens (JWT)** con `djangorestframework-simplejwt`.
     *   Paginación automática del catálogo a razón de **9 elementos por página**.
@@ -80,3 +80,25 @@ docker-compose exec backend python manage.py test api.tests
 *   **Michael Ciprian Flórez** (Planning Manager / Suplente: Isaac Diaz)
 *   **Nicolás Clavijo Ibagon** (Quality/Process Manager / Suplente: Juan Cubillos)
 *   **Sergio Contreras Rodríguez** (Support Manager / Suplente: Nicolás Clavijo)
+
+---
+
+## 🌐 Despliegue en la Nube (Azure Container Apps)
+
+La aplicación ha sido desplegada en **Azure Container Apps** utilizando la CLI de Azure (`az`), optimizada para operar bajo los límites de la **capacidad gratuita de Azure** (Azure Free Tier):
+
+*   **URL de la Aplicación (Frontend)**: [https://frontend.icyforest-b75998fd.eastus.azurecontainerapps.io](https://frontend.icyforest-b75998fd.eastus.azurecontainerapps.io)
+*   **Panel de Administración en la Nube**: [https://frontend.icyforest-b75998fd.eastus.azurecontainerapps.io/admin/](https://frontend.icyforest-b75998fd.eastus.azurecontainerapps.io/admin/)
+    *   **Usuario**: `admin`
+    *   **Contraseña**: `adminpassword`
+
+### 💡 Optimización de Costos y Nivel Gratuito:
+1.  **Asignación de Recursos**: Cada contenedor se ejecuta con el perfil mínimo permitido por Azure: **0.25 vCPU** y **0.5 GiB de memoria**.
+2.  **Escalado Activo a Cero (`min-replicas 0`)**: Los contenedores del frontend, backend y base de datos se suspenden automáticamente al no recibir solicitudes activas, lo que reduce el consumo de vCPU-segundos y GiB-segundos a cero durante los tiempos de inactividad.
+3.  *Nota de Acceso*: La primera solicitud que realices después de un período de inactividad puede demorar entre 20 y 40 segundos mientras se realiza el arranque en frío (Cold Start) de los contenedores.
+
+### 🧹 Eliminación de Recursos en Azure:
+Para evitar cargos futuros de almacenamiento del registro de imágenes o bases de datos una vez finalizada la revisión académica, elimina todo el grupo de recursos ejecutando el siguiente comando:
+```bash
+az group delete --name rg-volt-athletics --yes --no-wait
+```

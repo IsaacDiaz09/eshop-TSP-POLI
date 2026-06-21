@@ -15,7 +15,6 @@ python manage.py migrate
 # Seed database
 echo "Seeding database..."
 python manage.py seed_db
-
 # Start server
-echo "Starting Django development server..."
-python manage.py runserver 0.0.0.0:8000
+echo "Starting Django development server on port 80..."
+python manage.py runserver 0.0.0.0:80
