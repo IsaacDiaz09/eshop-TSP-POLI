@@ -45,15 +45,15 @@ El sistema está dividido en tres contenedores de Docker coordinados de forma se
 
 ## ⚡ Instrucciones para Ejecutar la Aplicación
 
-Levanta todo el entorno con un solo comando en la raíz del proyecto:
+Para iniciar todo el entorno con un solo comando en la raíz del proyecto, se ejecuta:
 
 ```bash
 docker-compose up --build
 ```
 
 Una vez que los contenedores estén activos:
-*   **Sitio Web (Tienda)**: Accede en [http://localhost](http://localhost) (puerto 80).
-*   **Administrador de Django**: Accede en [http://localhost/admin/](http://localhost/admin/).
+*   **Sitio Web (Tienda)**: Se accede a [http://localhost](http://localhost) (puerto 80).
+*   **Administrador de Django**: Se accede a [http://localhost/admin/](http://localhost/admin/).
 
 ### 🔑 Credenciales por Defecto (Superusuario Administrador)
 *   **Usuario**: `admin`
@@ -63,9 +63,9 @@ Una vez que los contenedores estén activos:
 
 ## 🧪 Ejecución de Pruebas Unitarias (Backend)
 
-Hemos implementado un conjunto de 7 pruebas unitarias de integración que validan el registro, login con JWT, filtros básicos/avanzados, y la integridad de stock transaccional durante el checkout.
+Se implementó un conjunto de 7 pruebas unitarias de integración que validan el registro, inicio de sesión con JWT, filtros básicos/avanzados, y la integridad de stock transaccional durante el checkout.
 
-Para correr las pruebas unitarias dentro del contenedor backend en ejecución:
+Para ejecutar las pruebas unitarias dentro del contenedor del backend en ejecución:
 
 ```bash
 docker-compose exec backend python manage.py test api.tests
@@ -95,10 +95,10 @@ La aplicación ha sido desplegada en **Azure Container Apps** utilizando la CLI 
 ### 💡 Optimización de Costos y Nivel Gratuito:
 1.  **Asignación de Recursos**: Cada contenedor se ejecuta con el perfil mínimo permitido por Azure: **0.25 vCPU** y **0.5 GiB de memoria**.
 2.  **Escalado Activo a Cero (`min-replicas 0`)**: Los contenedores del frontend, backend y base de datos se suspenden automáticamente al no recibir solicitudes activas, lo que reduce el consumo de vCPU-segundos y GiB-segundos a cero durante los tiempos de inactividad.
-3.  *Nota de Acceso*: La primera solicitud que realices después de un período de inactividad puede demorar entre 20 y 40 segundos mientras se realiza el arranque en frío (Cold Start) de los contenedores.
+3.  *Nota de Acceso*: La primera solicitud que se realice después de un período de inactividad puede demorar entre 20 y 40 segundos mientras se realiza el arranque en frío (Cold Start) de los contenedores.
 
 ### 🧹 Eliminación de Recursos en Azure:
-Para evitar cargos futuros de almacenamiento del registro de imágenes o bases de datos una vez finalizada la revisión académica, elimina todo el grupo de recursos ejecutando el siguiente comando:
+Para evitar cargos futuros de almacenamiento del registro de imágenes o bases de datos una vez finalizada la revisión académica, se recomienda eliminar todo el grupo de recursos ejecutando el siguiente comando:
 ```bash
 az group delete --name rg-volt-athletics --yes --no-wait
 ```
