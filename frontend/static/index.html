@@ -9,34 +9,26 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
-        /* Small styling overrides just to make the app look even cleaner */
+        /* Flat, simple styling overrides */
         body {
-            background-color: #f8f9fa;
+            background-color: #ffffff;
         }
         .product-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             cursor: pointer;
         }
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        .hero-banner {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            border-radius: 0.5rem;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
+            border-color: #888;
         }
     </style>
 </head>
 <body>
 
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#" onclick="resetCatalog(event)">
-                <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+            <a class="navbar-brand" href="#" onclick="resetCatalog(event)">
                 <span class="fw-bold">Volt Athletics</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -47,38 +39,35 @@
                 <!-- Basic Search Form -->
                 <form class="d-flex mx-auto col-12 col-lg-5 my-2 my-lg-0" id="searchForm" onsubmit="handleBasicSearch(event)">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar tenis, licras, chaquetas..." id="searchInput">
-                        <button class="btn btn-warning" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
+                        <input type="text" class="form-control" placeholder="Buscar productos..." id="searchInput">
+                        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
                     </div>
                 </form>
 
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
                     <!-- Auth section -->
                     <div id="authSection">
-                        <button class="btn btn-outline-light btn-sm me-2" data-bs-toggle="modal" data-bs-target="#authModal" onclick="setAuthTab('login')">
+                        <button class="btn btn-outline-dark btn-sm me-1" data-bs-toggle="modal" data-bs-target="#authModal" onclick="setAuthTab('login')">
                             Iniciar Sesión
                         </button>
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#authModal" onclick="setAuthTab('register')">
+                        <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#authModal" onclick="setAuthTab('register')">
                             Registrarse
                         </button>
                     </div>
                     <div id="userSection" class="d-none dropdown">
-                        <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" id="userMenuButton">
-                            <i class="bi bi-person-fill me-1"></i> <span id="usernameDisplay">Usuario</span>
+                        <a class="btn btn-outline-dark btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" id="userMenuButton">
+                            Usuario
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-menu-item dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#ordersModal" onclick="loadMyOrders()"><i class="bi bi-bag-check me-2"></i>Mis Pedidos</a></li>
+                            <li><a class="dropdown-menu-item dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#ordersModal" onclick="loadMyOrders()">Mis Pedidos</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-menu-item dropdown-item text-danger" href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+                            <li><a class="dropdown-menu-item dropdown-item text-danger" href="#" onclick="handleLogout(event)">Cerrar Sesión</a></li>
                         </ul>
                     </div>
 
                     <!-- Cart Trigger Button -->
-                    <button class="btn btn-warning position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-                        <i class="bi bi-cart3 me-1"></i> Carrito
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCountBadge">0</span>
+                    <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                        Carrito (<span id="cartCountBadge">0</span>)
                     </button>
                 </div>
             </div>
@@ -88,28 +77,14 @@
     <!-- Main Container -->
     <div class="container my-4">
         
-        <!-- Hero Section -->
-        <div class="hero-banner shadow-sm">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="display-5 fw-bold">Colección Deportiva de Alto Rendimiento</h1>
-                    <p class="lead">Lleva tus entrenamientos al siguiente nivel con nuestra indumentaria diseñada para campeones. Explora más de 20 prendas exclusivas.</p>
-                    <a href="#catalogSection" class="btn btn-warning btn-lg fw-semibold mt-2">Comprar Ahora</a>
-                </div>
-                <div class="col-md-4 text-center d-none d-md-block">
-                    <i class="bi bi-trophy-fill text-warning" style="font-size: 8rem;"></i>
-                </div>
-            </div>
-        </div>
-
         <!-- Catalog Area -->
         <div class="row" id="catalogSection">
             <!-- Sidebar: Advanced Search & Filters -->
             <div class="col-lg-3 mb-4">
-                <div class="card shadow-sm border-0 sticky-lg-top" style="top: 85px; z-index: 10;">
-                    <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-funnel-fill me-1"></i> Filtros Avanzados</span>
-                        <button class="btn btn-sm btn-outline-warning py-0 px-2" onclick="clearFilters()">Limpiar</button>
+                <div class="card border">
+                    <div class="card-header bg-light text-dark fw-bold d-flex justify-content-between align-items-center">
+                        <span>Filtros</span>
+                        <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="clearFilters()">Limpiar</button>
                     </div>
                     <div class="card-body">
                         <!-- Category Filter -->
@@ -185,7 +160,7 @@
                 <div class="row row-cols-1 row-cols-md-3 g-4" id="productsGrid">
                     <!-- Dynamically populated -->
                     <div class="col-12 text-center my-5 w-100">
-                        <div class="spinner-border text-warning" role="status">
+                        <div class="spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Cargando catálogo...</span>
                         </div>
                         <p class="mt-2 text-muted">Cargando catálogo de Volt Athletics...</p>
@@ -203,20 +178,20 @@
     </div>
 
     <!-- Footnote / Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="bg-light text-dark py-4 mt-5 border-top">
         <div class="container text-center">
-            <p class="mb-1 fw-bold"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Volt Athletics S.A.S</p>
-            <p class="small text-muted mb-0">Proyecto Académico TSP - Politécnico Grancolombiano © 2026. Todos los derechos reservados.</p>
+            <p class="mb-1 fw-bold">Volt Athletics</p>
+            <p class="small text-muted mb-0">Proyecto Académico TSP - Politécnico Grancolombiano © 2026.</p>
         </div>
     </footer>
 
     <!-- MODAL: Product Detail -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-light">
+            <div class="modal-content border">
+                <div class="modal-header bg-light text-dark border-bottom">
                     <h5 class="modal-title fw-bold" id="productModalLabel">Detalle de Producto</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" id="productModalBody">
                     <!-- Dynamically Populated -->
@@ -228,7 +203,7 @@
     <!-- MODAL: Authentication (Login / Register) -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-            <div class="modal-content border-0 shadow-lg">
+            <div class="modal-content border">
                 <div class="modal-header border-bottom-0 pb-0">
                     <ul class="nav nav-tabs w-100" id="authTabs" role="tablist">
                         <li class="nav-item w-50" role="presentation">
@@ -246,15 +221,15 @@
                         <div class="tab-pane fade show active" id="loginPane" role="tabpanel">
                             <form id="loginForm" onsubmit="handleLoginSubmit(event)">
                                 <div class="mb-3">
-                                    <label for="loginUsername" class="form-label fw-semibold">Nombre de usuario</label>
+                                    <label for="loginUsername" class="form-label">Nombre de usuario</label>
                                     <input type="text" class="form-control" id="loginUsername" required placeholder="Ingresa tu usuario">
                                 </div>
                                 <div class="mb-4">
-                                    <label for="loginPassword" class="form-label fw-semibold">Contraseña</label>
+                                    <label for="loginPassword" class="form-label">Contraseña</label>
                                     <input type="password" class="form-control" id="loginPassword" required placeholder="Ingresa tu contraseña">
                                 </div>
                                 <div class="alert alert-danger d-none" id="loginErrorAlert"></div>
-                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2">Ingresar</button>
+                                <button type="submit" class="btn btn-primary w-100 py-2">Ingresar</button>
                             </form>
                         </div>
                         
@@ -262,20 +237,20 @@
                         <div class="tab-pane fade" id="registerPane" role="tabpanel">
                             <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
                                 <div class="mb-3">
-                                    <label for="regUsername" class="form-label fw-semibold">Nombre de usuario</label>
+                                    <label for="regUsername" class="form-label">Nombre de usuario</label>
                                     <input type="text" class="form-control" id="regUsername" required placeholder="Ingresa un usuario">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="regEmail" class="form-label fw-semibold">Correo electrónico</label>
+                                    <label for="regEmail" class="form-label">Correo electrónico</label>
                                     <input type="email" class="form-control" id="regEmail" required placeholder="ejemplo@volt.com">
                                 </div>
                                 <div class="mb-4">
-                                    <label for="regPassword" class="form-label fw-semibold">Contraseña</label>
+                                    <label for="regPassword" class="form-label">Contraseña</label>
                                     <input type="password" class="form-control" id="regPassword" required placeholder="Crea una contraseña segura">
                                 </div>
                                 <div class="alert alert-danger d-none" id="regErrorAlert"></div>
                                 <div class="alert alert-success d-none" id="regSuccessAlert">Usuario creado con éxito. Ya puedes iniciar sesión.</div>
-                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2">Crear Cuenta</button>
+                                <button type="submit" class="btn btn-primary w-100 py-2">Crear Cuenta</button>
                             </form>
                         </div>
                     </div>
@@ -286,18 +261,17 @@
 
     <!-- OFFCANVAS: Shopping Cart -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="width: 450px;">
-        <div class="offcanvas-header bg-dark text-white">
-            <h5 class="offcanvas-title fw-bold" id="cartOffcanvasLabel"><i class="bi bi-cart3 me-2 text-warning"></i>Mi Carrito</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas-header bg-light text-dark border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="cartOffcanvasLabel">Mi Carrito</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column p-4">
             <!-- Cart Items Container -->
             <div class="flex-grow-1 overflow-auto mb-3" id="cartItemsList">
                 <!-- Dynamically populated or Empty message -->
                 <div class="text-center py-5 text-muted">
-                    <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
                     <p class="mt-2">Tu carrito está vacío.</p>
-                    <button class="btn btn-sm btn-outline-warning" data-bs-dismiss="offcanvas">Seguir explorando</button>
+                    <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="offcanvas">Seguir explorando</button>
                 </div>
             </div>
 
@@ -308,12 +282,11 @@
                     <span class="fs-4 fw-bold text-success" id="cartTotalText">COP $0</span>
                 </div>
                 <div class="alert alert-info d-flex align-items-center d-none" id="cartLoginPrompt">
-                    <i class="bi bi-info-circle-fill me-2 fs-5"></i>
                     <div>Debes <a href="#" class="alert-link" onclick="openAuthModalFromCart(event)">iniciar sesión</a> para completar tu pedido.</div>
                 </div>
                 <div class="alert alert-danger d-none" id="checkoutErrorAlert"></div>
-                <button class="btn btn-warning w-100 btn-lg fw-bold py-3" id="checkoutBtn" onclick="handleCheckout()">
-                    Confirmar Pedido <i class="bi bi-chevron-right ms-1"></i>
+                <button class="btn btn-primary w-100 btn-lg py-3" id="checkoutBtn" onclick="handleCheckout()">
+                    Confirmar Pedido
                 </button>
             </div>
         </div>
@@ -322,10 +295,10 @@
     <!-- MODAL: Orders / Purchase History -->
     <div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-light">
-                    <h5 class="modal-title fw-bold" id="ordersModalLabel"><i class="bi bi-bag-check-fill text-warning me-2"></i>Historial de Pedidos</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content border">
+                <div class="modal-header bg-light text-dark border-bottom">
+                    <h5 class="modal-title fw-bold" id="ordersModalLabel">Historial de Pedidos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4" id="ordersModalBody">
                     <!-- Dynamically Populated -->
@@ -337,12 +310,11 @@
     <!-- MODAL: Order Confirmation Success -->
     <div class="modal fade" id="successOrderModal" tabindex="-1" aria-labelledby="successOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
+            <div class="modal-content border">
                 <div class="modal-body text-center p-5">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
                     <h2 class="fw-bold mt-3">¡Pedido Confirmado!</h2>
-                    <p class="text-muted">Tu compra se ha procesado exitosamente en la simulación. El stock se ha actualizado en tiempo real.</p>
-                    <div class="card my-4 bg-light border-0">
+                    <p class="text-muted">Tu compra se ha procesado exitosamente.</p>
+                    <div class="card my-4 bg-light border">
                         <div class="card-body py-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Código del Pedido:</span>
@@ -354,7 +326,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-warning w-100 fw-bold py-2" data-bs-dismiss="modal">Aceptar</button>
+                    <button class="btn btn-primary w-100 py-2" data-bs-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
