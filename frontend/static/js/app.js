@@ -1,6 +1,14 @@
 // Volt Athletics - E-commerce JS Logic
 const API_BASE = '/api';
 
+// Price formatting helper
+function formatPrice(price) {
+    if (price === undefined || price === null) return '0';
+    const num = typeof price === 'number' ? price : parseFloat(price);
+    if (isNaN(num)) return '0';
+    return num.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
 // Application State
 let token = localStorage.getItem('access_token') || null;
 let currentUser = null;
@@ -324,7 +332,7 @@ function renderProducts() {
                         <p class="card-text text-muted small flex-grow-1 text-truncate">${product.description}</p>
                         
                         <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-2">
-                            <span class="fs-5 fw-bold text-success">COP $${product.price.toLocaleString()}</span>
+                            <span class="fs-5 fw-bold text-success">COP $${formatPrice(product.price)}</span>
                             ${isOutOfStock 
                                 ? '<span class="badge bg-danger">Agotado</span>' 
                                 : `<span class="badge bg-success-subtle text-success">Stock: ${totalStock}</span>`
@@ -421,7 +429,7 @@ function viewProductDetail(productId) {
             <div class="col-md-7">
                 <span class="badge bg-secondary text-uppercase mb-2">${selectedProduct.brand}</span>
                 <h2 class="fw-bold text-dark">${selectedProduct.name}</h2>
-                <h3 class="text-success fw-bold mb-3">COP $${selectedProduct.price.toLocaleString()}</h3>
+                <h3 class="text-success fw-bold mb-3">COP $${formatPrice(selectedProduct.price)}</h3>
                 
                 <p class="text-secondary small border-bottom pb-3">${selectedProduct.description}</p>
                 
@@ -634,7 +642,7 @@ function renderCart() {
                                     <input type="text" class="form-control text-center py-0" value="${item.quantity}" readonly>
                                     <button class="btn btn-outline-secondary btn-sm" onclick="updateCartQty(${index}, 1)">+</button>
                                 </div>
-                                <span class="fw-bold text-success small">COP $${itemTotal.toLocaleString()}</span>
+                                <span class="fw-bold text-success small">COP $${formatPrice(itemTotal)}</span>
                             </div>
                         </div>
                     </div>
@@ -643,7 +651,7 @@ function renderCart() {
         `;
     });
 
-    totalText.textContent = `COP $${totalPrice.toLocaleString()}`;
+    totalText.textContent = `COP $${formatPrice(totalPrice)}`;
 
     // Login check
     if (token) {
@@ -738,7 +746,7 @@ async function handleCheckout() {
 
             // Open Confirmation modal
             document.getElementById('successOrderId').textContent = `#${data.id}`;
-            document.getElementById('successOrderTotal').textContent = `COP $${data.total_price.toLocaleString()}`;
+            document.getElementById('successOrderTotal').textContent = `COP $${formatPrice(data.total_price)}`;
             
             const successModal = new bootstrap.Modal(document.getElementById('successOrderModal'));
             successModal.show();
@@ -819,7 +827,7 @@ async function loadMyOrders() {
                                             <td><span class="fw-semibold">${item.brand}</span> ${item.product_name}</td>
                                             <td>Talla: ${item.size} | Color: ${item.color}</td>
                                             <td class="text-center">${item.quantity}</td>
-                                            <td class="text-end">COP $${item.price.toLocaleString()}</td>
+                                            <td class="text-end">COP $${formatPrice(item.price)}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -827,7 +835,7 @@ async function loadMyOrders() {
                         </div>
                         <div class="border-top pt-2 d-flex justify-content-between align-items-center">
                             <span class="badge bg-success">${order.status_display}</span>
-                            <span class="fw-bold text-success fs-5">Total: COP $${order.total_price.toLocaleString()}</span>
+                            <span class="fw-bold text-success fs-5">Total: COP $${formatPrice(order.total_price)}</span>
                         </div>
                     </div>
                 </div>
