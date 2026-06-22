@@ -313,7 +313,7 @@ function renderProducts() {
 
         grid.innerHTML += `
             <div class="col">
-                <div class="card h-100 border-0 shadow-sm product-card" onclick="viewProductDetail(${product.id})">
+                <div class="card h-100 border product-card" onclick="viewProductDetail(${product.id})">
                     <img src="${product.image_url || 'https://via.placeholder.com/300'}" class="card-img-top object-fit-cover" alt="${product.name}" style="height: 220px;">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -416,7 +416,7 @@ function viewProductDetail(productId) {
     modalBody.innerHTML = `
         <div class="row">
             <div class="col-md-5 mb-3 mb-md-0">
-                <img src="${selectedProduct.image_url}" alt="${selectedProduct.name}" class="img-fluid rounded shadow-sm w-100 object-fit-cover" style="max-height: 380px;">
+                <img src="${selectedProduct.image_url}" alt="${selectedProduct.name}" class="img-fluid rounded border w-100 object-fit-cover" style="max-height: 380px;">
             </div>
             <div class="col-md-7">
                 <span class="badge bg-secondary text-uppercase mb-2">${selectedProduct.brand}</span>
@@ -462,7 +462,7 @@ function viewProductDetail(productId) {
                         </div>
                     </div>
                     <div class="col-8 col-md-9">
-                        <button class="btn btn-warning w-100 fw-bold py-2" id="modalAddToCartBtn" disabled onclick="addProductToCart()">
+                        <button class="btn btn-primary w-100 py-2" id="modalAddToCartBtn" disabled onclick="addProductToCart()">
                             <i class="bi bi-cart-plus me-1"></i> Agregar al Carrito
                         </button>
                     </div>
@@ -613,7 +613,7 @@ function renderCart() {
         totalPrice += itemTotal;
 
         list.innerHTML += `
-            <div class="card mb-3 border-0 bg-light shadow-sm">
+            <div class="card mb-3 border bg-light">
                 <div class="card-body p-3">
                     <div class="row g-2 align-items-center">
                         <div class="col-3">
@@ -797,8 +797,8 @@ async function loadMyOrders() {
             }
 
             modalBody.innerHTML = orders.map(order => `
-                <div class="card mb-3 border-0 shadow-sm bg-light">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2">
+                <div class="card mb-3 border bg-light">
+                    <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center py-2 border-bottom">
                         <span class="fw-bold">Pedido #${order.id}</span>
                         <span class="small">${new Date(order.created_at).toLocaleDateString('es-CO', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
