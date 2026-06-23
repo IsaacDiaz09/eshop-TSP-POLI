@@ -311,6 +311,38 @@
         </div>
     </div>
 
+    <!-- MODAL: Checkout Details (Shipping Address & Payment Method) -->
+    <div class="modal fade" id="checkoutDetailsModal" tabindex="-1" aria-labelledby="checkoutDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+            <div class="modal-content border">
+                <div class="modal-header bg-light text-dark border-bottom">
+                    <h5 class="modal-title fw-bold" id="checkoutDetailsModalLabel">Detalles de Envío y Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="checkoutDetailsForm" onsubmit="submitPurchase(event)">
+                        <div class="mb-3">
+                            <label for="shippingAddress" class="form-label fw-semibold text-secondary">Dirección de Envío</label>
+                            <input type="text" class="form-control" id="shippingAddress" required placeholder="Ej: Calle 123 #45-67, Bogotá">
+                        </div>
+                        <div class="mb-4">
+                            <label for="paymentMethod" class="form-label fw-semibold text-secondary">Método de Pago</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="" disabled selected>Selecciona un método de pago</option>
+                                <option value="Tarjeta de Crédito (Simulada)">Tarjeta de Crédito (Simulada)</option>
+                                <option value="PSE / Transferencia Bancaria (Simulada)">PSE / Transferencia Bancaria (Simulada)</option>
+                                <option value="PayPal (Simulado)">PayPal (Simulado)</option>
+                                <option value="Efectivo / Contra Entrega (Simulado)">Efectivo / Contra Entrega (Simulado)</option>
+                            </select>
+                        </div>
+                        <div class="alert alert-danger d-none" id="checkoutModalErrorAlert"></div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">Completar Compra</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Order Confirmation Success -->
     <div class="modal fade" id="successOrderModal" tabindex="-1" aria-labelledby="successOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -318,15 +350,23 @@
                 <div class="modal-body text-center p-5">
                     <h2 class="fw-bold mt-3">¡Pedido Confirmado!</h2>
                     <p class="text-muted">Tu compra se ha procesado exitosamente.</p>
-                    <div class="card my-4 bg-light border">
+                    <div class="card my-4 bg-light border text-start">
                         <div class="card-body py-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Código del Pedido:</span>
                                 <span class="fw-bold text-dark" id="successOrderId">#0</span>
                             </div>
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Total Pagado:</span>
                                 <span class="fw-bold text-success" id="successOrderTotal">COP $0</span>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-secondary">Dirección de Envío:</div>
+                                <div class="fw-bold text-dark" id="successOrderAddress">-</div>
+                            </div>
+                            <div>
+                                <div class="text-secondary">Método de Pago:</div>
+                                <div class="fw-bold text-dark" id="successOrderPayment">-</div>
                             </div>
                         </div>
                     </div>

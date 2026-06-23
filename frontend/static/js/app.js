@@ -726,6 +726,29 @@ async function handleCheckout() {
         return;
     }
 
+    // Close Cart offcanvas
+    const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas'));
+    cartOffcanvas.hide();
+
+    // Reset Form Fields in Checkout Details Modal
+    document.getElementById('shippingAddress').value = '';
+    document.getElementById('paymentMethod').selectedIndex = 0;
+    document.getElementById('checkoutModalErrorAlert').classList.add('d-none');
+
+    // Show Details Modal
+    const checkoutDetailsModal = new bootstrap.Modal(document.getElementById('checkoutDetailsModal'));
+    checkoutDetailsModal.show();
+}
+
+// Complete order creation with address and payment method details
+async function submitPurchase(event) {
+    event.preventDefault();
+    const errorAlert = document.getElementById('checkoutModalErrorAlert');
+    errorAlert.classList.add('d-none');
+
+    const address = document.getElementById('shippingAddress').value;
+    const payment = document.getElementById('paymentMethod').value;
+
     // Format items for API
     const itemsPayload = cart.map(item => ({
         variant_id: item.variantId,
@@ -747,18 +770,21 @@ async function handleCheckout() {
         const data = await response.json();
 
         if (response.ok) {
-            // Close Cart offcanvas
-            const cartOffcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas'));
-            cartOffcanvas.hide();
+            // Close Details modal
+            const checkoutDetailsModalEl = document.getElementById('checkoutDetailsModal');
+            const checkoutDetailsModal = bootstrap.Modal.getInstance(checkoutDetailsModalEl);
+            checkoutDetailsModal.hide();
 
             // Clear Cart state
             cart = [];
             saveCart();
             renderCart();
 
-            // Open Confirmation modal
+            // Open Confirmation modal with details
             document.getElementById('successOrderId').textContent = `#${data.id}`;
             document.getElementById('successOrderTotal').textContent = `COP $${formatPrice(data.total_price)}`;
+            document.getElementById('successOrderAddress').textContent = address;
+            document.getElementById('successOrderPayment').textContent = payment;
             
             const successModal = new bootstrap.Modal(document.getElementById('successOrderModal'));
             successModal.show();
