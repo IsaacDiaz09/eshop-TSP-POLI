@@ -209,11 +209,18 @@ async function handleRegisterSubmit(event) {
     const usernameInput = document.getElementById('regUsername');
     const emailInput = document.getElementById('regEmail');
     const passwordInput = document.getElementById('regPassword');
+    const passwordConfirmInput = document.getElementById('regPasswordConfirm');
     const errorAlert = document.getElementById('regErrorAlert');
     const successAlert = document.getElementById('regSuccessAlert');
 
     errorAlert.classList.add('d-none');
     successAlert.classList.add('d-none');
+
+    if (passwordInput.value !== passwordConfirmInput.value) {
+        errorAlert.textContent = 'Las contraseñas no coinciden.';
+        errorAlert.classList.remove('d-none');
+        return;
+    }
 
     try {
         const response = await fetch(`${API_BASE}/auth/register/`, {
@@ -222,7 +229,8 @@ async function handleRegisterSubmit(event) {
             body: JSON.stringify({
                 username: usernameInput.value,
                 email: emailInput.value,
-                password: passwordInput.value
+                password: passwordInput.value,
+                password_confirm: passwordConfirmInput.value
             })
         });
 
@@ -234,6 +242,7 @@ async function handleRegisterSubmit(event) {
             usernameInput.value = '';
             emailInput.value = '';
             passwordInput.value = '';
+            passwordConfirmInput.value = '';
             // Switch to login tab after 1.5 seconds
             setTimeout(() => {
                 setAuthTab('login');

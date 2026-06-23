@@ -67,7 +67,8 @@ class EShopAPITests(APITestCase):
         data = {
             "username": "newuser",
             "email": "new@volt.com",
-            "password": "newpassword123"
+            "password": "newpassword123",
+            "password_confirm": "newpassword123"
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

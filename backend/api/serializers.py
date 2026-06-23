@@ -5,12 +5,24 @@ from .models import Category, Product, ProductVariant, Order, OrderItem
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password', 'password_confirm')
+
+    def validate(self, attrs):
+        if 'password' in attrs:
+            password = attrs['password']
+            password_confirm = attrs.get('password_confirm')
+            if not password_confirm:
+                raise serializers.ValidationError({"password_confirm": ["Este campo es requerido."]})
+            if password != password_confirm:
+                raise serializers.ValidationError({"password_confirm": ["Las contraseñas no coinciden."]})
+        return attrs
 
     def create(self, validated_data):
+        validated_data.pop('password_confirm', None)
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
