@@ -216,7 +216,10 @@ async function handleRegisterSubmit(event) {
     errorAlert.classList.add('d-none');
     successAlert.classList.add('d-none');
 
-    if (passwordInput.value !== passwordConfirmInput.value) {
+    const pwdVal = passwordInput.value.trim();
+    const pwdConfirmVal = passwordConfirmInput.value.trim();
+
+    if (pwdVal !== pwdConfirmVal) {
         errorAlert.textContent = 'Las contraseñas no coinciden.';
         errorAlert.classList.remove('d-none');
         return;
@@ -227,10 +230,10 @@ async function handleRegisterSubmit(event) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                username: usernameInput.value,
-                email: emailInput.value,
-                password: passwordInput.value,
-                password_confirm: passwordConfirmInput.value
+                username: usernameInput.value.trim(),
+                email: emailInput.value.trim(),
+                password: pwdVal,
+                password_confirm: pwdConfirmVal
             })
         });
 
