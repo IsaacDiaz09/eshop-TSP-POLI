@@ -43,6 +43,28 @@ async function initApp() {
     if (token) {
         loadUserProfile();
     }
+
+    // Initialize checkout input formatters
+    const ccExpiry = document.getElementById('ccExpiry');
+    if (ccExpiry) {
+        ccExpiry.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 2) {
+                e.target.value = val.slice(0, 2) + '/' + val.slice(2, 4);
+            } else {
+                e.target.value = val;
+            }
+        });
+    }
+
+    const ccNumber = document.getElementById('ccNumber');
+    if (ccNumber) {
+        ccNumber.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            let formatted = val.match(/.{1,4}/g);
+            e.target.value = formatted ? formatted.join(' ') : '';
+        });
+    }
 }
 
 // ==========================================
@@ -711,6 +733,61 @@ function openAuthModalFromCart(event) {
     setAuthTab('login');
 }
 
+// Shipping city change handler
+function handleCityChange(select) {
+    const container = document.getElementById('otherCityContainer');
+    const input = document.getElementById('shippingOtherCity');
+    if (select.value === 'Otra') {
+        container.classList.remove('d-none');
+        input.required = true;
+    } else {
+        container.classList.add('d-none');
+        input.required = false;
+        input.value = '';
+    }
+}
+
+// Payment method selector handler
+function handlePaymentMethodChange(select) {
+    const cardDiv = document.getElementById('creditCardFields');
+    const pseDiv = document.getElementById('pseFields');
+    const paypalDiv = document.getElementById('paypalFields');
+    const cashDiv = document.getElementById('cashFields');
+
+    // Hide all
+    cardDiv.classList.add('d-none');
+    pseDiv.classList.add('d-none');
+    paypalDiv.classList.add('d-none');
+    cashDiv.classList.add('d-none');
+
+    // Remove required attributes
+    document.getElementById('ccNumber').required = false;
+    document.getElementById('ccName').required = false;
+    document.getElementById('ccExpiry').required = false;
+    document.getElementById('ccCvv').required = false;
+    document.getElementById('pseBank').required = false;
+    document.getElementById('pseDocNum').required = false;
+    document.getElementById('paypalEmail').required = false;
+
+    const val = select.value;
+    if (val === 'tarjeta') {
+        cardDiv.classList.remove('d-none');
+        document.getElementById('ccNumber').required = true;
+        document.getElementById('ccName').required = true;
+        document.getElementById('ccExpiry').required = true;
+        document.getElementById('ccCvv').required = true;
+    } else if (val === 'pse') {
+        pseDiv.classList.remove('d-none');
+        document.getElementById('pseBank').required = true;
+        document.getElementById('pseDocNum').required = true;
+    } else if (val === 'paypal') {
+        paypalDiv.classList.remove('d-none');
+        document.getElementById('paypalEmail').required = true;
+    } else if (val === 'cash') {
+        cashDiv.classList.remove('d-none');
+    }
+}
+
 // Checkout submission
 async function handleCheckout() {
     const errorAlert = document.getElementById('checkoutErrorAlert');
@@ -731,8 +808,27 @@ async function handleCheckout() {
     cartOffcanvas.hide();
 
     // Reset Form Fields in Checkout Details Modal
+    document.getElementById('shippingName').value = '';
+    document.getElementById('shippingPhone').value = '';
+    document.getElementById('shippingCity').selectedIndex = 0;
     document.getElementById('shippingAddress').value = '';
-    document.getElementById('paymentMethod').selectedIndex = 0;
+    document.getElementById('shippingOtherCity').value = '';
+    document.getElementById('shippingOtherCity').required = false;
+    document.getElementById('otherCityContainer').classList.add('d-none');
+
+    // Reset payment fields
+    document.getElementById('ccNumber').value = '';
+    document.getElementById('ccName').value = '';
+    document.getElementById('ccExpiry').value = '';
+    document.getElementById('ccCvv').value = '';
+    document.getElementById('pseBank').selectedIndex = 0;
+    document.getElementById('pseDocNum').value = '';
+    document.getElementById('paypalEmail').value = '';
+
+    const paymentSelect = document.getElementById('paymentMethod');
+    paymentSelect.selectedIndex = 0;
+    handlePaymentMethodChange(paymentSelect);
+
     document.getElementById('checkoutModalErrorAlert').classList.add('d-none');
 
     // Show Details Modal
@@ -746,8 +842,31 @@ async function submitPurchase(event) {
     const errorAlert = document.getElementById('checkoutModalErrorAlert');
     errorAlert.classList.add('d-none');
 
-    const address = document.getElementById('shippingAddress').value;
-    const payment = document.getElementById('paymentMethod').value;
+    const name = document.getElementById('shippingName').value.trim();
+    const phone = document.getElementById('shippingPhone').value.trim();
+    const citySelect = document.getElementById('shippingCity').value;
+    const otherCity = document.getElementById('shippingOtherCity').value.trim();
+    const address = document.getElementById('shippingAddress').value.trim();
+    const method = document.getElementById('paymentMethod').value;
+
+    const city = citySelect === 'Otra' ? otherCity : citySelect;
+    const fullAddressText = `${address}, ${city} (Para: ${name} - Tel: ${phone})`;
+
+    let paymentDetailsText = '';
+    if (method === 'tarjeta') {
+        const ccNum = document.getElementById('ccNumber').value.trim();
+        const last4 = ccNum.replace(/\s/g, '').slice(-4) || 'xxxx';
+        paymentDetailsText = `Tarjeta de Crédito (Terminada en: *${last4})`;
+    } else if (method === 'pse') {
+        const bank = document.getElementById('pseBank').value;
+        const docNum = document.getElementById('pseDocNum').value.trim();
+        paymentDetailsText = `PSE / Transf. Bancaria (Banco: ${bank}, Doc: ${docNum})`;
+    } else if (method === 'paypal') {
+        const email = document.getElementById('paypalEmail').value.trim();
+        paymentDetailsText = `PayPal (Email: ${email})`;
+    } else if (method === 'cash') {
+        paymentDetailsText = `Contra Entrega / Efectivo`;
+    }
 
     // Format items for API
     const itemsPayload = cart.map(item => ({
@@ -783,8 +902,8 @@ async function submitPurchase(event) {
             // Open Confirmation modal with details
             document.getElementById('successOrderId').textContent = `#${data.id}`;
             document.getElementById('successOrderTotal').textContent = `COP $${formatPrice(data.total_price)}`;
-            document.getElementById('successOrderAddress').textContent = address;
-            document.getElementById('successOrderPayment').textContent = payment;
+            document.getElementById('successOrderAddress').textContent = fullAddressText;
+            document.getElementById('successOrderPayment').textContent = paymentDetailsText;
             
             const successModal = new bootstrap.Modal(document.getElementById('successOrderModal'));
             successModal.show();

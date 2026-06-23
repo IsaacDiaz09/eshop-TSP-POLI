@@ -313,7 +313,7 @@
 
     <!-- MODAL: Checkout Details (Shipping Address & Payment Method) -->
     <div class="modal fade" id="checkoutDetailsModal" tabindex="-1" aria-labelledby="checkoutDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
             <div class="modal-content border">
                 <div class="modal-header bg-light text-dark border-bottom">
                     <h5 class="modal-title fw-bold" id="checkoutDetailsModalLabel">Detalles de Envío y Pago</h5>
@@ -321,22 +321,119 @@
                 </div>
                 <div class="modal-body p-4">
                     <form id="checkoutDetailsForm" onsubmit="submitPurchase(event)">
-                        <div class="mb-3">
-                            <label for="shippingAddress" class="form-label fw-semibold text-secondary">Dirección de Envío</label>
-                            <input type="text" class="form-control" id="shippingAddress" required placeholder="Ej: Calle 123 #45-67, Bogotá">
+                        <!-- Section 1: Shipping Details -->
+                        <h6 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-truck me-2"></i>Información de Envío</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="shippingName" class="form-label small fw-semibold text-secondary">Nombre Completo</label>
+                                <input type="text" class="form-control" id="shippingName" required placeholder="Nombre y Apellido">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="shippingPhone" class="form-label small fw-semibold text-secondary">Teléfono de Contacto</label>
+                                <input type="tel" class="form-control" id="shippingPhone" required placeholder="Ej: 3001234567">
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="paymentMethod" class="form-label fw-semibold text-secondary">Método de Pago</label>
-                            <select class="form-select" id="paymentMethod" required>
-                                <option value="" disabled selected>Selecciona un método de pago</option>
-                                <option value="Tarjeta de Crédito (Simulada)">Tarjeta de Crédito (Simulada)</option>
-                                <option value="PSE / Transferencia Bancaria (Simulada)">PSE / Transferencia Bancaria (Simulada)</option>
-                                <option value="PayPal (Simulado)">PayPal (Simulado)</option>
-                                <option value="Efectivo / Contra Entrega (Simulado)">Efectivo / Contra Entrega (Simulado)</option>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="shippingCity" class="form-label small fw-semibold text-secondary">Ciudad</label>
+                                <select class="form-select" id="shippingCity" required onchange="handleCityChange(this)">
+                                    <option value="" disabled selected>Selecciona tu ciudad</option>
+                                    <option value="Bogotá">Bogotá</option>
+                                    <option value="Medellín">Medellín</option>
+                                    <option value="Cali">Cali</option>
+                                    <option value="Barranquilla">Barranquilla</option>
+                                    <option value="Otra">Otra ciudad...</option>
+                                </select>
+                                <div class="mt-2 d-none" id="otherCityContainer">
+                                    <input type="text" class="form-control" id="shippingOtherCity" placeholder="Especifica tu ciudad">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="shippingAddress" class="form-label small fw-semibold text-secondary">Dirección Completa</label>
+                                <input type="text" class="form-control" id="shippingAddress" required placeholder="Ej: Calle 123 #45-67, Apto 402">
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Payment Method -->
+                        <h6 class="fw-bold mt-4 mb-3 border-bottom pb-2 text-dark"><i class="bi bi-credit-card me-2"></i>Método de Pago</h6>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label small fw-semibold text-secondary">Selecciona una opción</label>
+                            <select class="form-select" id="paymentMethod" required onchange="handlePaymentMethodChange(this)">
+                                <option value="" disabled selected>Elige cómo pagar...</option>
+                                <option value="tarjeta">Tarjeta de Crédito</option>
+                                <option value="pse">PSE / Transferencia Bancaria</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="cash">Efectivo / Contra Entrega</option>
                             </select>
                         </div>
+
+                        <!-- Dynamic Fields: Credit Card -->
+                        <div class="p-3 bg-light border rounded mb-3 d-none" id="creditCardFields">
+                            <div class="mb-3">
+                                <label for="ccNumber" class="form-label small fw-semibold text-secondary">Número de Tarjeta</label>
+                                <input type="text" class="form-control" id="ccNumber" placeholder="4000 1234 5678 9010" maxlength="19">
+                            </div>
+                            <div class="mb-3">
+                                <label for="ccName" class="form-label small fw-semibold text-secondary">Nombre en la Tarjeta</label>
+                                <input type="text" class="form-control" id="ccName" placeholder="Nombre completo">
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label for="ccExpiry" class="form-label small fw-semibold text-secondary">Fecha Exp.</label>
+                                    <input type="text" class="form-control text-center" id="ccExpiry" placeholder="MM/AA" maxlength="5">
+                                </div>
+                                <div class="col-6">
+                                    <label for="ccCvv" class="form-label small fw-semibold text-secondary">CVC/CVV</label>
+                                    <input type="password" class="form-control text-center" id="ccCvv" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Fields: PSE -->
+                        <div class="p-3 bg-light border rounded mb-3 d-none" id="pseFields">
+                            <div class="mb-3">
+                                <label for="pseBank" class="form-label small fw-semibold text-secondary">Banco</label>
+                                <select class="form-select" id="pseBank">
+                                    <option value="" disabled selected>Elige tu banco...</option>
+                                    <option value="Bancolombia">Bancolombia</option>
+                                    <option value="Banco de Bogotá">Banco de Bogotá</option>
+                                    <option value="Davivienda">Davivienda</option>
+                                    <option value="Nequi">Nequi</option>
+                                    <option value="Daviplata">Daviplata</option>
+                                    <option value="BBVA">BBVA</option>
+                                </select>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <label for="pseDocType" class="form-label small fw-semibold text-secondary">Tipo Doc.</label>
+                                    <select class="form-select" id="pseDocType">
+                                        <option value="CC">CC</option>
+                                        <option value="CE">CE</option>
+                                        <option value="NIT">NIT</option>
+                                    </select>
+                                </div>
+                                <div class="col-8">
+                                    <label for="pseDocNum" class="form-label small fw-semibold text-secondary">Documento</label>
+                                    <input type="text" class="form-control" id="pseDocNum" placeholder="Número de identificación">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Fields: PayPal -->
+                        <div class="p-3 bg-light border rounded mb-3 d-none" id="paypalFields">
+                            <div class="mb-3">
+                                <label for="paypalEmail" class="form-label small fw-semibold text-secondary">Correo PayPal</label>
+                                <input type="email" class="form-control" id="paypalEmail" placeholder="correo@paypal.com">
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Fields: Cash / Contra Entrega -->
+                        <div class="p-3 bg-light border rounded mb-3 d-none" id="cashFields">
+                            <div class="alert alert-warning py-2 mb-0 small"><i class="bi bi-exclamation-triangle me-2"></i>Pagarás en efectivo o con datáfono cuando el repartidor llegue a tu dirección. Asegúrate de tener el monto exacto disponible.</div>
+                        </div>
+
                         <div class="alert alert-danger d-none" id="checkoutModalErrorAlert"></div>
-                        <button type="submit" class="btn btn-primary w-100 py-2">Completar Compra</button>
+                        <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-bold">Completar Compra</button>
                     </form>
                 </div>
             </div>
